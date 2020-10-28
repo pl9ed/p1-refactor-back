@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.revature.repositories.EmployeeDAOI
+import com.revature.services.EmployeeService
 
 @RestController
 class EmployeeController {
 
     @Autowired
     private lateinit var employeeDAO: EmployeeDAOI
+
+    @Autowired
+    private lateinit var employeeService: EmployeeService
 
     @GetMapping("/employee/{username}")
     fun getEmployee(@PathVariable username: String): ResponseEntity<Employee> {
@@ -25,10 +29,19 @@ class EmployeeController {
 
     @PostMapping("/employee")
     fun postEmployee(@RequestBody employeeDTO: EmployeeDTO): ResponseEntity<Employee> {
-        val employee = employeeDTO.toEmployee()
-        val response = employeeDAO.save(employee)
+        try {
+            val employee = employeeDTO.toEmployee()
 
-        return ResponseEntity.status(201).body(response)
+            if (employeeService.isValidEmployee(employee)) {
+                val response = employeeDAO.save(employee)
+                return ResponseEntity.status(201).body(response)
+            }
+            return ResponseEntity.badRequest().build()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ResponseEntity.badRequest().build()
+        }
+
     }
 
 }

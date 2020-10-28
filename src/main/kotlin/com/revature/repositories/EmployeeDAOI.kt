@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface EmployeeDAOI: CrudRepository<Employee, Int> {
     fun findByUsername(username: String): Employee?
     fun save(user: Employee): Employee
+    fun existsByUsername(username:String): Boolean
 }
