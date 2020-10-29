@@ -35,7 +35,6 @@ open class EmployeeService {
         } else if (user.password.length < 1) {
             return false
         }
-
         return true
     }
 }

@@ -1,21 +1,13 @@
 package com.revature.repositories
 
+import TestUtil
 import com.revature.models.Employee
 import com.revature.p1refactorback.P1RefactorBackApplication
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
-import org.springframework.web.context.WebApplicationContext
-import org.testng.Assert.assertEquals
-import org.testng.Assert.assertNull
+import org.testng.Assert.*
 import org.testng.annotations.AfterMethod
-import org.testng.annotations.BeforeClass
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
@@ -39,12 +31,12 @@ class EmployeeDAOTest(): AbstractTestNGSpringContextTests() {
 
     @Test
     private fun testFindById() {
-        assertEquals(TestUtil.employee, empDAO.findByUsername(TestUtil.employee.username))
+        assertEquals(empDAO.findByUsername(TestUtil.employee.username).get(), TestUtil.employee)
     }
 
     @Test
     private fun testFindByIdNonexistent() {
-        assertNull(empDAO.findByUsername("nonexistent"))
+        assertTrue(!empDAO.findByUsername("nonexistent").isPresent)
     }
 
     @Test
@@ -61,10 +53,16 @@ class EmployeeDAOTest(): AbstractTestNGSpringContextTests() {
 
         assertEquals(updatedUser, empDAO.save(updatedUser))
 
-        val retrievedUser = empDAO.findByUsername(updatedUser.username)
+        val retrievedOptional = empDAO.findByUsername(updatedUser.username)
+        if (retrievedOptional.isPresent) {
+            val retrievedUser = retrievedOptional.get()
+            assertEquals(updatedUser, retrievedUser)
+            assertEquals(newFN, retrievedUser.firstName)
+        } else {
+            fail("Empty Optional")
+        }
 
-        assertEquals(updatedUser, retrievedUser)
-        assertEquals(newFN, retrievedUser?.firstName)
+
     }
 
 }
