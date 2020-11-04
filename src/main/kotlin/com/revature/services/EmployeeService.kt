@@ -23,7 +23,7 @@ open class EmployeeService {
 
     fun updateUser(user: Employee): Employee? {
         val validEmployee = employeeDAO.findByUsername(user.username)
-        if (validEmployee != null) {
+        if (validEmployee.isPresent) {
             return employeeDAO.save(user)
         }
         return null

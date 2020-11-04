@@ -47,6 +47,9 @@ open class S3Service {
     fun putObject(objKey:String, file:ByteArray):String {
         return putObject(objKey, file, s3, BUCKET_NAME)
     }
+    fun deleteObject(objKey:String): Boolean {
+        return deleteObject(objKey, s3, BUCKET_NAME)
+    }
 
     fun deleteObject(objKey:String ,s3:S3Client = this.s3, bucketName:String = BUCKET_NAME): Boolean {
         try {
@@ -55,7 +58,7 @@ open class S3Service {
                     .bucket(bucketName)
                     .build()
             val deleteResponse = s3.deleteObject(deleteRequest)
-            if (deleteResponse.sdkHttpResponse().statusCode() == 204) {
+            if (deleteResponse.sdkHttpResponse().statusCode()/100 == 2) {
                 return true
             }
         } catch (e: S3Exception) {

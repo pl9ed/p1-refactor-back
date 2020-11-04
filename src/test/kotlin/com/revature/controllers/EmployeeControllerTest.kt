@@ -1,6 +1,7 @@
 package com.revature.controllers
 
 import TestUtil
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.revature.models.Employee
 import com.revature.repositories.EmployeeDAOI
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.testng.Assert.assertEquals
 import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.BeforeMethod
@@ -42,14 +44,6 @@ class EmployeeControllerTest {
         `when`(empDAO.save(TestUtil.employee)).thenReturn(TestUtil.employee)
     }
 
-    @BeforeMethod
-    fun setUp() {
-    }
-
-    @AfterMethod
-    fun tearDown() {
-    }
-
     @Test
     fun testGetEmployee() {
         get("/employee/${TestUtil.employee.username}")
@@ -65,7 +59,26 @@ class EmployeeControllerTest {
                 .then()
                 .log().ifValidationFails()
                 .assertThat()
-                .statusCode(404)
+                .statusCode(204)
+    }
+
+    @Test
+    fun testGetAllEmpty() {
+        `when`(empDAO.findAll()).thenReturn(mutableListOf())
+        val response = get("/employee")
+        assertEquals(response.statusCode, 200)
+        val body = objectMapper.readValue(response.body.asString(),List::class.java)
+        assertEquals(body.size, 0)
+    }
+
+    @Test
+    fun testGetAllEmployees() {
+        `when`(empDAO.findAll()).thenReturn(TestUtil.employeeList)
+        val response = get("/employee")
+
+        assertEquals(response.statusCode, 200)
+        val expectedBody = objectMapper.writeValueAsString(TestUtil.employeeList)
+        assertEquals(response.body.asString(), expectedBody)
     }
 
     @Test

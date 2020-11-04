@@ -21,12 +21,16 @@ class EmployeeController {
     @GetMapping("/employee/{username}")
     fun getEmployee(@PathVariable username: String): ResponseEntity<Employee> {
         val employee = employeeDAO.findByUsername(username)
-        return if (employee.isPresent()) {
+        return if (employee.isPresent) {
             ResponseEntity.ok(employee.get())
         } else {
-            ResponseEntity.notFound().build()
+            ResponseEntity.noContent().build()
         }
     }
+
+    @GetMapping("/employee")
+    fun getAllEmployees(): ResponseEntity<Iterable<Employee>> =
+            ResponseEntity.status(200).body(employeeDAO.findAll())
 
     @PostMapping("/employee")
     fun postEmployee(@RequestBody employeeDTO: EmployeeDTO): ResponseEntity<Employee> {
