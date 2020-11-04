@@ -14,6 +14,7 @@ import org.testng.annotations.Test
 
 import org.testng.Assert.*
 import org.testng.annotations.BeforeClass
+import java.util.*
 
 class EmployeeServiceTest {
 
@@ -24,13 +25,14 @@ class EmployeeServiceTest {
     private val empService: EmployeeService = EmployeeService()
     private val user: Employee = TestUtil.employee
 
+    private val newEmp = Employee("username", "password")
 
 
     @BeforeClass
     fun setUpBeforeClass() {
         MockitoAnnotations.initMocks(this)
 
-        `when`(empDAO.findByUsername(TestUtil.employee.username)).thenReturn(TestUtil.employee)
+        `when`(empDAO.findByUsername(TestUtil.employee.username)).thenReturn(Optional.of(TestUtil.employee))
     }
 
     @BeforeMethod
@@ -76,7 +78,30 @@ class EmployeeServiceTest {
         assertNull(empService.updateUser(nonexistent))
     }
 
-    // --------------- HELPER METHODS FOR KOTLIN ------------------------------
+    @Test
+    fun testValidateValid() {
+        assertTrue(empService.isValidEmployee(TestUtil.employee))
+    }
 
-    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
+    @Test
+    fun testValidateEmptyUsername() {
+        val emptyUsername = Employee("","password")
+
+        assertFalse(empService.isValidEmployee(emptyUsername))
+    }
+
+    @Test
+    fun testValidateEmptyPassword() {
+        newEmp.password = ""
+
+        assertFalse(empService.isValidEmployee(newEmp))
+
+    }
+
+    @Test
+    fun testValidateEmptyOther() {
+        assertTrue(empService.isValidEmployee(newEmp))
+    }
+
+
 }

@@ -14,6 +14,7 @@ import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
+import java.util.*
 
 class EmployeeControllerTest {
 
@@ -35,8 +36,10 @@ class EmployeeControllerTest {
     fun setUpBeforeClass() {
         MockitoAnnotations.initMocks(this)
         standaloneSetup(empController)
-        `when`(empDAO.findByUsername(TestUtil.employee.username)).thenReturn(TestUtil.employee)
-        `when`(empDAO.findByUsername(nonexistentUsername)).thenReturn(null)
+        `when`(empDAO.findByUsername(TestUtil.employee.username)).thenReturn(Optional.of(TestUtil.employee))
+        `when`(empDAO.findByUsername(nonexistentUsername)).thenReturn(Optional.empty())
+
+        `when`(empDAO.save(TestUtil.employee)).thenReturn(TestUtil.employee)
     }
 
     @BeforeMethod
@@ -100,6 +103,19 @@ class EmployeeControllerTest {
         val json = objectMapper.writeValueAsString(invalid)
 
         given()
+                .body(json)
+                .contentType("application/json")
+                .post("/employee")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(400)
+    }
+
+    @Test
+    fun testIncorrectMapping() {
+        val json = "{aaa,asdwdwdwde3}"
+
+        given ()
                 .body(json)
                 .contentType("application/json")
                 .post("/employee")

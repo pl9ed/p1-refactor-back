@@ -1,5 +1,6 @@
 package com.revature.controllers
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.revature.models.Employee
 import com.revature.models.EmployeeDTO
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,9 +20,9 @@ class EmployeeController {
 
     @GetMapping("/employee/{username}")
     fun getEmployee(@PathVariable username: String): ResponseEntity<Employee> {
-        val employee: Employee? = employeeDAO.findByUsername(username)
-        return if (employee != null) {
-            ResponseEntity.ok(employee)
+        val employee = employeeDAO.findByUsername(username)
+        return if (employee.isPresent()) {
+            ResponseEntity.ok(employee.get())
         } else {
             ResponseEntity.notFound().build()
         }
@@ -37,8 +38,8 @@ class EmployeeController {
                 return ResponseEntity.status(201).body(response)
             }
             return ResponseEntity.badRequest().build()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: JsonParseException) {
+            // TODO log
             return ResponseEntity.badRequest().build()
         }
 
