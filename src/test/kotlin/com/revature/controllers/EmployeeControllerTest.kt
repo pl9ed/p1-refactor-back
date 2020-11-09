@@ -137,4 +137,29 @@ class EmployeeControllerTest {
                 .statusCode(400)
     }
 
+    @Test
+    fun testLogin() {
+        `when`(empService.login("user1","pass1")).thenReturn(TestUtil.employee)
+        val response = given()
+                .param("username","user1")
+                .param("password","pass1")
+                .contentType("multipart/form-data")
+                .post("/login")
+        assertEquals(response.statusCode, 200)
+
+        val empString = objectMapper.writeValueAsString(TestUtil.employee)
+        assertEquals(response.body.asString(), empString)
+    }
+
+    @Test
+    fun testLoginFail() {
+        `when`(empService.login("user1","pass1")).thenReturn(TestUtil.employee)
+        val response = given()
+                .param("username","user1")
+                .param("password","pass123")
+                .contentType("multipart/form-data")
+                .post("/login")
+        assertEquals(response.statusCode,401)
+    }
+
 }

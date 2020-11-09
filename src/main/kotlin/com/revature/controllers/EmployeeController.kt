@@ -46,7 +46,13 @@ class EmployeeController {
             // TODO log
             return ResponseEntity.badRequest().build()
         }
+    }
 
+    @PostMapping("/login", consumes=["multipart/form-data"])
+    fun login(@RequestParam("username") username:String,
+              @RequestParam("password") password:String): ResponseEntity<Employee> {
+        val user = employeeService.login(username, password) ?: return ResponseEntity.status(401).build()
+        return ResponseEntity.ok(user)
     }
 
 }

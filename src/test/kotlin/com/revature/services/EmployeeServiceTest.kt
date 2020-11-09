@@ -103,5 +103,14 @@ class EmployeeServiceTest {
         assertTrue(empService.isValidEmployee(newEmp))
     }
 
+    @Test
+    fun testLogin() {
+        assertEquals(empService.login("user1","pass1"), TestUtil.employee)
+    }
+
+    @Test
+    fun testLoginFail() {
+        assertNull(empService.login("bbb","aaa"))
+    }
 
 }
