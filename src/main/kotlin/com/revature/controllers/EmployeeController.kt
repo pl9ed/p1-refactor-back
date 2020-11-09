@@ -10,6 +10,7 @@ import com.revature.repositories.EmployeeDAOI
 import com.revature.services.EmployeeService
 
 @RestController
+@CrossOrigin
 class EmployeeController {
 
     @Autowired
