@@ -14,5 +14,7 @@ class TestUtil {
                 Reimbursement(2, employee,"fakeurl.com/img2",amount=20.0,description="description2",category=SpendingCategory.TRAVEL, status=0)
         @JvmField val deniedReimb =
                 Reimbursement(3, fm,"fakeurl.com/img3", fm, 100.00, "description3", SpendingCategory.LODGINGS, -1)
+        @JvmField val employeeList = mutableListOf(employee,fm)
+        @JvmField val reimbList = mutableListOf(approvedReimb, pendingReimb, deniedReimb)
     }
 }

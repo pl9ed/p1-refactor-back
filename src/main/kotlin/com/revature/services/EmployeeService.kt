@@ -12,6 +12,16 @@ open class EmployeeService {
     @Autowired
     private lateinit var employeeDAO: EmployeeDAOI
 
+    fun login(username:String, password:String): Employee? {
+        val user = employeeDAO.findByUsername(username)
+        if (user.isPresent) {
+            if (checkPassword(user.get(), password)) {
+                return user.get()
+            }
+        }
+        return null
+    }
+
     fun checkPassword(user: Employee, pass:String):Boolean {
         return BCrypt.checkpw(pass,user.password)
     }
@@ -23,7 +33,7 @@ open class EmployeeService {
 
     fun updateUser(user: Employee): Employee? {
         val validEmployee = employeeDAO.findByUsername(user.username)
-        if (validEmployee != null) {
+        if (validEmployee.isPresent) {
             return employeeDAO.save(user)
         }
         return null

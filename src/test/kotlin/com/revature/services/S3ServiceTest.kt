@@ -31,4 +31,10 @@ class S3ServiceTest {
     fun testDelete() {
         assertTrue(s3Service.deleteObject(filename))
     }
+
+    @Test(dependsOnMethods= ["testPut"])
+    fun testDeleteNonExistent() {
+        assertTrue(s3Service.deleteObject("invalid_filename"))
+    }
+
 }
