@@ -16,5 +16,7 @@ data class Reimbursement(@Id @GeneratedValue var id:Int,
                          var amount:Double = 0.0,
                          var description:String = "",
                          var category: SpendingCategory = SpendingCategory.OTHER,
-                         var status: Int = 0
+                         var status: Int = 0,
+                         var submitDate: Long = System.currentTimeMillis(),
+                         var resolveDate: Long = -1
                          ) {}

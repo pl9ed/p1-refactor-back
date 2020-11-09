@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
+@CrossOrigin
 class ReimbursementController {
 
     @Autowired
@@ -53,7 +54,7 @@ class ReimbursementController {
                           @RequestParam("file") receipt: MultipartFile): ResponseEntity<Reimbursement> {
         return try {
             val reimbDTO = objectMapper.readValue(reimbDTOString, ReimbursementDTO::class.java)
-            val receiptName = StringBuilder().append("${reimbDTO.submitter?.username}_${System.currentTimeMillis()}")
+            val receiptName = StringBuilder().append("${reimbDTO.submitter?.username}_${System.currentTimeMillis()}_")
 
             var fileName = receipt.originalFilename
             if (fileName.isNullOrEmpty()) {
